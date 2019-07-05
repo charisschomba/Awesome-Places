@@ -7,14 +7,14 @@ import {
 import ListItem from './ListItem';
 
 
-const ListPlaces = ({ places, onItemPressed }) => {
+const ListPlaces = ({ places, selectedItem }) => {
   return (
     <FlatList
       style={styles.listContainer}
       data={places}
       renderItem={(info) =>
         <ListItem
-        onDelete={() => onItemPressed(info.item.key)}
+        onSelectedItem={() => selectedItem(info.item.key)}
         placeName={info.item.name}
         placeImage={info.item.image}
         />

@@ -12,6 +12,7 @@ import {Platform, StyleSheet, Text, View, TextInput, Button} from 'react-native'
 import ListPlaces from './src/components/ListItem/ListPlaces';
 import AddPlaces from './src/components/InputForm';
 import PlaceImage from './src/assets/1.jpg';
+import PlaceDetail from './src/components/PlaceDetail';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -24,6 +25,7 @@ export default class App extends Component{
   state = {
     placeName: "",
     places: [],
+    selectedPlace: null,
   };
 
   changeName = (e) => {
@@ -46,20 +48,43 @@ export default class App extends Component{
     });
   };
 
-  deletePlace = key => {
+  onDeletePlace = (key) => {
     this.setState(prevState => {
       return {
         places:   prevState.places.filter(place => {
           return place.key !== key
-        })
+        }),
+        selectedPlace: null
       }
     })
   };
 
+  closeModal = () => {
+    this.setState({selectedPlace: null})
+  };
+
+  onSelectedItem = key => {
+    this.setState(prevState => {
+      return {
+        selectedPlace: prevState.places.find(place => {
+          return {
+            place: place.key === key
+          }
+        })
+      };
+    });
+
+  };
+
   render() {
-    const { places, placeName } = this.state;
+    const { places, placeName, selectedPlace } = this.state;
     return (
       <View style={styles.container}>
+        <PlaceDetail
+          selectedPlace={selectedPlace}
+          closeModal={this.closeModal}
+          deletePlace={this.onDeletePlace}
+        />
         <AddPlaces
           addPlace={this.addPlace}
           name={placeName}
@@ -68,7 +93,7 @@ export default class App extends Component{
         <View style={styles.listContainer}>
           <ListPlaces
             places={places}
-            onItemPressed={this.deletePlace}
+            selectedItem={this.onSelectedItem}
           />
         </View>
 
