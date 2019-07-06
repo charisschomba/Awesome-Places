@@ -5,8 +5,11 @@ import {
   Text,
   Button,
   StyleSheet,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native';
+
+import Icon from 'react-native-vector-icons/Ionicons'
 
 const PlaceDetail = ({selectedPlace, closeModal, deletePlace }) => {
   let modalContent = null;
