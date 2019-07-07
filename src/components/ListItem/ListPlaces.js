@@ -5,8 +5,6 @@ import {
 } from 'react-native';
 
 import ListItem from './ListItem';
-
-
 const ListPlaces = ({ places, selectedItem }) => {
   return (
     <FlatList

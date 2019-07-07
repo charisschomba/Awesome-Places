@@ -14,7 +14,6 @@ const AddPlace = () => {
     if(placeName.trim() === "") {
       return;
     }
-    console.warn(places.concat(placeName));
     setPlace(prevState => prevState.concat(placeName));
   };
 

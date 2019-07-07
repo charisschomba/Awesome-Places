@@ -6,13 +6,12 @@ import {
   Button
 } from 'react-native';
 
-const AddPlaces = ({ name, changeName, addPlace }) => {
+const AddPlaces = ({ changeName, addPlace }) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.inputPlace}
         placeholder='An awesome place'
-        value={name}
         onChangeText={changeName}
       />
       <Button
