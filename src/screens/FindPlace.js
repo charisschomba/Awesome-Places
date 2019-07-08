@@ -7,23 +7,17 @@ import PlaceList from '../components/ListItem/ListPlaces';
 
 class FindPlace extends Component {
 
+  static navigationOptions = {
+    tabBarLabel: 'Find Place',
+  };
+
   itemSelectedHandler = key => {
     const selectedPlace = this.props.places.find(place => place.key === key);
-    Navigation.push(this.props.componentId, {
-      component: {
-        name: 'view-place',
-        passProps: {
-          selectedPlace: selectedPlace,
-        },
-        options: {
-          topBar: {
-            title: {
-              text: selectedPlace.name
-            }
-          }
-        }
-      }
+    this.props.navigation.navigate('PlaceDetail', {
+      selectedPlace: selectedPlace,
+      text: selectedPlace.name
     })
+
   };
   render() {
     return(

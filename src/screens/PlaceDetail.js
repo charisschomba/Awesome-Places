@@ -14,24 +14,27 @@ import { deletePlace } from '../store/actions/places';
 
 class PlaceDetail extends Component {
 
-  onPlaceDeleteHandler = () => {
-    this.props.onDeletePlace(this.props.selectedPlace.key);
-    Navigation.pop(this.props.componentId);
+  onPlaceDeleteHandler = (placeKey) => {
+    this.props.onDeletePlace(placeKey);
+    this.props.navigation.navigate('PlacesTab');
   };
 
   render() {
+    const { navigation } = this.props;
+    const selectedPlace = navigation.getParam('selectedPlace');
+
     return (
       <View style={styles.modalContainer}>
         <View>
           <Image
-            source={this.props.selectedPlace.image}
+            source={selectedPlace.image}
             style={styles.placeImage}
           />
-          <Text> {this.props.selectedPlace.name}</Text>
+          <Text> {selectedPlace.name}</Text>
         </View>
         <View>
           <TouchableOpacity
-            onPress={() => this.onPlaceDeleteHandler()}
+            onPress={() => this.onPlaceDeleteHandler(selectedPlace.key)}
             style={styles.deleteButton}
           >
             <Icon name="ios-trash" size={30} color='red'/>

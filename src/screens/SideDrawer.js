@@ -7,7 +7,7 @@ class SideDrawer extends Component {
     return (
       <View>
         <Text>
-          This is a side drawer
+          This is a side drawer {this.props.text}
         </Text>
       </View>
     );

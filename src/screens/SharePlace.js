@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Button } from 'react-native';
 import { connect } from 'react-redux';
-import { Navigation } from "react-native-navigation";
 
 import PlaceInput from '../components/AddPlace';
 
@@ -12,11 +11,18 @@ class SharePlace extends Component {
     placeName: ''
   };
 
+  static navigationOptions = {
+    tabBarLabel: 'Share Place',
+   };
+
+
+
   onAddPlaceHandler = () => {
     if(this.state.placeName.trim() === "") {
       return;
     }
     this.props.onAddPlace(this.state.placeName);
+    this.props.navigation.navigate('FindPlace');
   };
 
   onChangeName = (e) => {
