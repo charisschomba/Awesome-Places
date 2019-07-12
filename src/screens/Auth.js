@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {View, Text, Button, SafeAreaView, StyleSheet} from 'react-native';
 
-import PlacesTab from '../screens/startMainTab';
-
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +12,7 @@ const styles = StyleSheet.create({
 
 class AuthScreen extends Component {
   login = () => {
-    return this.props.navigation.navigate('PlacesTab');
+    return this.props.navigation.navigate('Places');
   };
   render() {
     return(

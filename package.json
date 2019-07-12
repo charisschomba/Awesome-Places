@@ -9,6 +9,7 @@
     "android-dev": "react-native run-android"
   },
   "dependencies": {
+    "native-base": "^2.12.1",
     "react": "16.8.3",
     "react-native": "0.59.10",
     "react-native-gesture-handler": "^1.3.0",

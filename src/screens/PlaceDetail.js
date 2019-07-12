@@ -16,13 +16,12 @@ class PlaceDetail extends Component {
 
   onPlaceDeleteHandler = (placeKey) => {
     this.props.onDeletePlace(placeKey);
-    this.props.navigation.navigate('PlacesTab');
+    this.props.navigation.navigate('Places');
   };
 
   render() {
     const { navigation } = this.props;
     const selectedPlace = navigation.getParam('selectedPlace');
-
     return (
       <View style={styles.modalContainer}>
         <View>

@@ -1,45 +1,24 @@
 import React from 'react';
-import { createBottomTabNavigator, createStackNavigator} from 'react-navigation';
+import { createBottomTabNavigator} from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Ionicons'
 
 import SharePlace from './SharePlace';
 import FindPlace from './FindPlace';
-import MenuButton from '../components/MenuButton';
 
-const Tab1 = createStackNavigator(
-  {
-    Tab1: {
-      screen: FindPlace,
-      navigationOptions: {
-        headerLeft: null,
-        headerTitle: "Find Place",
-        headerRight: <MenuButton />,
-      }
-    },
-  }
-);
+// class PlacesBottomTaB extends React.Component {
+//   render(){
+//     return (
 
-const Tab2 = createStackNavigator(
-  {
-    Tab1: {
-      screen: SharePlace,
-      navigationOptions: {
-        headerLeft: null,
-        headerTitle: "Share Place",
-        headerRight: <MenuButton />,
-      }
-    },
-  }
-);
-
-
+//     );
+//   }
+// }
 
 const TabNavigator = createBottomTabNavigator(
+
   {
-  FindPlace: Tab1,
-  SharePlace: Tab2
-},
+  FindPlace: FindPlace,
+  SharePlace: SharePlace
+  },
   {
     defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ tintColor }) => {
@@ -58,6 +37,10 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
     },
+  },{
+    navigationOptions: {
+      // header: <CustomHeader />,
+    }
   });
 
 export default TabNavigator;

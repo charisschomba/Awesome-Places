@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import { View, Text } from 'react-native';
+import {Text, View} from "react-native";
 
-class SideDrawer extends Component {
+
+class Notifications extends Component {
   render() {
     return (
       <View>
         <Text>
-          This is a side drawer {this.props.text}
+          This is notification screen
         </Text>
       </View>
     );
@@ -21,6 +22,4 @@ const mapStateToProps = state => {
 const  mapDispatchToProps = dispatch =>  {
   return {};
 };
-
-
-export default connect(mapStateToProps,mapDispatchToProps)(SideDrawer);
+export default connect(mapDispatchToProps,mapStateToProps)(Notifications);
