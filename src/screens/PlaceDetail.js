@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -36,7 +37,11 @@ class PlaceDetail extends Component {
             onPress={() => this.onPlaceDeleteHandler(selectedPlace.key)}
             style={styles.deleteButton}
           >
-            <Icon name="ios-trash" size={30} color='red'/>
+            <Icon 
+            name={Platform.OS === "android" ? 'md-trash' : 'ios-trash'} 
+            size={30} 
+            color='red'
+            />
           </TouchableOpacity>
         </View>
       </View>

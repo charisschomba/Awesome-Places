@@ -15,16 +15,13 @@ import configureStore from './src/store/configStore';
 
 import AuthScreen from './src/screens/Auth';
 import PlaceDetail from './src/screens/PlaceDetail';
-import Settings from './src/screens/Settings';
-import Notifications from './src/screens/Notifications';
+import SideDrawerContent from './src/screens/SideDrawerContent';
 import PlacesTab from './src/screens/startMainTab';
 import CustomHeader from './src/components/Header';
 
 const store = configureStore();
 
 export const AppDrawerNavigator  = createDrawerNavigator({
-  Notification: Notifications,
-  Settings: Settings,
   Places:{
     screen: PlacesTab,
   },
@@ -33,7 +30,8 @@ export const AppDrawerNavigator  = createDrawerNavigator({
     {
       header: <CustomHeader navigationProps={navigation}/>
     }
-  )
+  ),
+  contentComponent: (props) =>  <SideDrawerContent  {...props} />
 });
 
 

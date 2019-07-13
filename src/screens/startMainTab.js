@@ -1,7 +1,7 @@
-import React from 'react';
+ import React from 'react';
 import { createBottomTabNavigator} from 'react-navigation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { Platform } from 'react-native';
 import SharePlace from './SharePlace';
 import FindPlace from './FindPlace';
 
@@ -26,9 +26,18 @@ const TabNavigator = createBottomTabNavigator(
         let IconComponent = Ionicons;
         let iconName;
         if (routeName === 'FindPlace') {
-          iconName = `md-map`;
+          if(Platform.OS === 'android'){
+            iconName = `md-map`;
+          } else{
+            iconName = `ios-map`;
+          } 
         } else if (routeName === 'SharePlace') {
-          iconName = `ios-share-alt`;
+          if(Platform.OS === 'android'){
+            iconName = `md-share`;
+          } else{
+            iconName = `ios-share-alt`;
+          } 
+
         }
         return <IconComponent name={iconName} size={25} color={tintColor} />;
       },
