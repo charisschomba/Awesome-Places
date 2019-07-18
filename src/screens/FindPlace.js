@@ -1,20 +1,34 @@
-import React, { Component } from 'react';
-import { Navigation} from "react-native-navigation";
-import { View, StyleSheet } from 'react-native';
+import React, { Component } from 'react'; 
+import { View, StyleSheet, Animated } from 'react-native';
 import { connect } from 'react-redux'
-import NoItems from '../components/UI/NoItem';
+import NoPlaces from '../components/UI/NoItem';
 import Spinner from '../components/UI/Spinner';
 import PlaceList from '../components/ListItem/ListPlaces';
 
 class FindPlace extends Component {
   state = {
     placesLoaded: true,
+    aminValue: new Animated.Value(0),
   }
   static navigationOptions = {
     tabBarLabel: 'Find Place',
     header: null,
   };
 
+  componentDidMount() {
+    if(this.state.placesLoaded && this.props.places.length === 0)this.animateText();
+  }
+  
+  componentDidUpdate(){
+    if(this.state.placesLoaded && this.props.places.length === 0)this.animateText();
+  }
+  animateText = () => {
+    Animated.timing(this.state.aminValue, {
+      duration: 5000,
+      useNativeDriver: true,
+      toValue: 1
+    }).start();
+  }
   itemSelectedHandler = key => {
     const selectedPlace = this.props.places.find(place => place.key === key);
     this.props.navigation.navigate('PlaceDetail', {
@@ -24,6 +38,17 @@ class FindPlace extends Component {
 
   };
   render() {
+    const opacity = this.state.aminValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1]
+    });
+    const Animstyles =  {
+      opacityAnim: {
+        opacity,
+        fontWeight: 'bold',
+        fontSize:15
+      }
+    }
     return(
       <View style={styles.container}>
         {
@@ -33,8 +58,8 @@ class FindPlace extends Component {
           selectedItem={this.itemSelectedHandler}
           /> 
         : this.state.placesLoaded && this.props.places.length === 0 
-        ? <NoItems>No places to display</NoItems>
-        : <Spinner />
+        ? <NoPlaces style={Animstyles.opacityAnim}>Awesome places will be displayed here</NoPlaces>
+        : <Spinner>Fetching awesome places</Spinner>
         }
       </View>
     );
@@ -52,7 +77,7 @@ class FindPlace extends Component {
       flex: 1,
       justifyContent: 'center',
       display: 'flex'
-    }
+    },
   })
   
 

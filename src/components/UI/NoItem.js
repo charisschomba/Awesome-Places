@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 
 const NoItem = props => (
-    <View style={styles.textContainer}>
-        <Text>{props.children}</Text>
-    </View>
+   <View style={styles.textContainer}>
+      <Animated.Text style={props.style}>{props.children}</Animated.Text>
+   </View>
 );
 
 const styles = StyleSheet.create({
