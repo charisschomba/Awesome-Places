@@ -26,14 +26,14 @@ class CustomHeader extends Component {
               <Body>
                 <Title>Awesome Places</Title>
               </Body>
-            <Right>
+            {/* <Right>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => this.props.navigationProps.goBack()}
                 >
                   <Icon name='arrow-back' size={30} style={{color: 'black'}} />
                 </TouchableOpacity>
-            </Right>
+            </Right> */}
           </Header>
       </View>
     );

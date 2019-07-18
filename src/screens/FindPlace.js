@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { Navigation} from "react-native-navigation";
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
-import CustomHeader from '../components/Header';
-
+import NoItems from '../components/UI/NoItem';
+import Spinner from '../components/UI/Spinner';
 import PlaceList from '../components/ListItem/ListPlaces';
 
 class FindPlace extends Component {
-
+  state = {
+    placesLoaded: true,
+  }
   static navigationOptions = {
     tabBarLabel: 'Find Place',
     header: null,
@@ -23,12 +25,17 @@ class FindPlace extends Component {
   };
   render() {
     return(
-      <View>
-        {/* <CustomHeader {...this.props} /> */}
-        <PlaceList
+      <View style={styles.container}>
+        {
+          this.state.placesLoaded && this.props.places.length !== 0 
+          ? <PlaceList
           places={this.props.places}
           selectedItem={this.itemSelectedHandler}
-        />
+          /> 
+        : this.state.placesLoaded && this.props.places.length === 0 
+        ? <NoItems>No places to display</NoItems>
+        : <Spinner />
+        }
       </View>
     );
   }
@@ -40,5 +47,13 @@ class FindPlace extends Component {
     }
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      display: 'flex'
+    }
+  })
+  
 
 export default connect(mapStateToProps, null)(FindPlace);

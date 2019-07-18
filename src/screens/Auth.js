@@ -6,6 +6,7 @@ import HeadingText from '../components/UI/HeaderText';
 import TextWrapper from '../components/UI/MainTextWrapper';
 import CustomButton from '../components/UI/CustomButton';
 import background from '../assets/background.jpeg';
+import B from '../components/UI/eg';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,13 +44,16 @@ class AuthScreen extends Component {
   }
   constructor (props) {
     super(props);
-    Dimensions.addEventListener("change", (dims) => {
-      this.setState({
-        viewMode: Dimensions.get('window').height > 500 ? "potrait" : "landscape"
-      });
-    })
+    Dimensions.addEventListener("change", this.updateStyles )
   }
-
+  componentWillUnmount(){
+    Dimensions.removeEventListener('change', this.updateStyles)
+  }
+  updateStyles = (dims) => {
+    this.setState({
+      viewMode: dims.window.height > 500 ? "potrait" : "landscape"
+    });
+  }
   login = () => {
     return this.props.navigation.navigate('Places');
   };
