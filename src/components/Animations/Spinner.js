@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import { View, ActivityIndicator, Animated } from 'react-native';
-import LoadingItem from './NoItem';
+import LoadingItem from '../UI/NoItem';
 
 const Spinner = props => {
   const [aminValue] = useState(new Animated.Value(0));

@@ -10,12 +10,20 @@ import {
 
 const CustomButton = props => {
   const content = (
-    <View style={[styles.button, {backgroundColor: props.color}]}>
+    <View style={[
+      styles.button,
+      {backgroundColor: props.color},
+      props.disabled ? styles.disabled : null
+    ]}>
       <Text>
         {props.children}
       </Text>
     </View>
-  )
+  );
+  if (props.disabled){
+    return content
+  }
+
   if(Platform.OS === "android") {
    return(
     <TouchableNativeFeedback onPress={props.onPress}>
@@ -32,6 +40,12 @@ const CustomButton = props => {
 };
 
 const styles = StyleSheet.create({
+  disabled:{
+    backgroundColor: "#eee",
+    color: "#eee",
+    borderColor: "black"
+
+    },
   button: {
     padding: 10,
     margin: 5,

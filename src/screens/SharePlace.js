@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
-import { View, Button, Text, ImageBackground, StyleSheet, ScrollView, Image } from 'react-native';
+import {
+  View,
+  Button,
+  ImageBackground,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import PlaceInput from '../components/AddPlace';
-import DefaultInput from '../components/UI/DefaultInput';
 import HeaderText from '../components/UI/HeaderText';
 import TextWrapper from '../components/UI/MainTextWrapper';
 import PickImage from '../components/PickImage';
@@ -11,8 +19,6 @@ import PickLocation from '../components/PickLocation';
 
 import { addPlace } from '../store/actions/places'
 import background from '../assets/share.jpeg';
-import previewImage from '../assets/was.jpeg';
-import previewMap from '../assets/map.jpeg';
 
 class SharePlace extends Component {
   state = {
@@ -39,19 +45,23 @@ class SharePlace extends Component {
   render() {
     return(
       <ImageBackground source={background} style={styles.backgroundImage}>
-      <ScrollView>
-      <View style={styles.container}>
-        <TextWrapper>
-          <HeaderText>Share a place with us!</HeaderText>
-        </TextWrapper>
-        <PickImage />
-        <PickLocation />
-        <PlaceInput PlaceName={this.onChangePlace}/>
-        <View style={styles.button}>
-          <Button title='share the place' onPress={this.onAddPlaceHandler}/>
-        </View>
-      </View>
-      </ScrollView>
+        <KeyboardAvoidingView behavior="height">
+          <ScrollView>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.container}>
+                <TextWrapper>
+                  <HeaderText>Share a place with us!</HeaderText>
+                </TextWrapper>
+                <PickImage />
+                <PickLocation />
+                <PlaceInput PlaceName={this.onChangePlace}/>
+                <View style={styles.button}>
+                  <Button title='share the place' onPress={this.onAddPlaceHandler}/>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </ImageBackground>
     );
   }

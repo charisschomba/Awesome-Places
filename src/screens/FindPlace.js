@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import { connect } from 'react-redux'
 import NoPlaces from '../components/UI/NoItem';
-import Spinner from '../components/UI/Spinner';
+import Spinner from '../components/Animations/Spinner';
 import PlaceList from '../components/ListItem/ListPlaces';
 
 class FindPlace extends Component {
@@ -38,16 +38,19 @@ class FindPlace extends Component {
 
   };
   render() {
-    const opacity = this.state.aminValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1]
-    });
+    const opacity = this.state.aminValue
     const Animstyles =  {
       opacityAnim: {
         opacity,
         fontWeight: 'bold',
         fontSize:15
-      }
+      },
+      transform: [{
+        translateY: this.state.aminValue.interpolate({
+          inputRange: [0, 1],
+          outputRange: [1, 0]
+        }),
+      }],
     }
     return(
       <View style={styles.container}>
