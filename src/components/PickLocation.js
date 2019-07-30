@@ -1,16 +1,72 @@
 import React from 'react';
-import {View, Image, Button, StyleSheet} from 'react-native';
-import previewMap from '../assets/map.jpeg';
+import {View, Text, Button, StyleSheet, Dimensions} from 'react-native';
+import MapView from 'react-native-maps';
 
 class PickImage extends React.Component {
+  state ={
+    pickedLocation: null,
+    initialRegion:{
+      latitude: 37.7900352,
+      longitude: -122.4023726,
+      latitudeDelta: 0.0122,
+      longitudeDelta: Dimensions.get('window').width /  Dimensions.get('window').width * 0.0122,
+  }};
+
+  handlePickLocation = (event) => {
+    const {nativeEvent: {coordinate: {latitude, longitude }}} = event;
+    this.map.animateToRegion({
+      ...this.state.initialRegion,
+      longitude: longitude,
+      latitude: latitude,
+    });
+    this.setState(prevState => {
+      return {
+        initialRegion: {
+          ...prevState.initialRegion,
+          longitude: longitude,
+          latitude: latitude,
+        },
+        pickedLocation: true,
+      }
+    })
+  };
+  getLocationHandler = () => {
+    navigator.geolocation.getCurrentPosition( ({ coords:{latitude, longitude} }) => {
+        const coordsEvent = {
+          nativeEvent: {
+            coordinate:{
+              latitude: latitude,
+              longitude: longitude
+            }
+          }
+        };
+        this.handlePickLocation(coordsEvent)
+    },
+      error => {
+        console.log(error);
+        alert('Fetching the current position failed, please pick one manually')
+      })
+  };
   render(){
+    let marker = null;
+    if(this.state.pickedLocation){
+      marker = <MapView.Marker coordinate={this.state.initialRegion}/>
+    }
     return(
       <View style={styles.container}>
-        <View style={styles.placeHolder}>
-          <Image source={previewMap} style={styles.previewImage}/>
-        </View>
+        <MapView
+          style={styles.map}
+          initialRegion={this.state.initialRegion}
+          onPress={this.handlePickLocation}
+          ref = {ref => this.map = ref}
+        >{marker}</MapView>
         <View style={styles.button}>
-          <Button title='Locate me'/>
+          <Button title='Locate me' onPress={this.getLocationHandler}/>
+        </View>
+        <View>
+          <Text>
+            {this.state.initialRegion.longitude}
+          </Text>
         </View>
       </View>
     );
@@ -29,8 +85,8 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 200
   },
-  previewImage: {
-    height: "100%",
+  map: {
+    height: 250,
     width: "100%"
   },
   button : {

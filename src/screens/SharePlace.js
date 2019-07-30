@@ -44,7 +44,6 @@ class SharePlace extends Component {
   };
   render() {
     return(
-      <ImageBackground source={background} style={styles.backgroundImage}>
         <KeyboardAvoidingView behavior="height">
           <ScrollView>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -62,7 +61,6 @@ class SharePlace extends Component {
             </TouchableWithoutFeedback>
           </ScrollView>
         </KeyboardAvoidingView>
-      </ImageBackground>
     );
   }
 }
