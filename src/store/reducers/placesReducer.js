@@ -10,15 +10,18 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
+  const { location, placeName, image } = action;
   switch (action.type) {
     case ADD_PLACE:
       return {
         ...state,
         places: state.places.concat({
           key: Math.random().toString(),
-          name: action.placeName,
-          image: PlaceImage,
-          location: action.location
+          name: placeName,
+          image: {
+            uri: image.uri
+          },
+          location: location,
         })
       };
     case DELETE_PLACE:

@@ -14,14 +14,15 @@ class PickImage extends React.Component {
       } else {
         this.setState({
           pickedImage: {uri: res.uri}
-        })
+        });
+        this.props.onPickedImage({uri: res.uri, base64: res.data});
       }
-    })
+    });
   };
   render(){
     return(
       <View style={styles.container}>
-        <View style={styles.placeHolder}>
+        <View style={styles.image}>
           <Image source={this.state.pickedImage} style={styles.previewImage}/>
         </View>
         <View style={styles.button}>
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     width :'100%',
     alignItems: 'center'
   },
-  placeHolder: {
+  image: {
     borderColor: 'black',
     borderWidth: 1,
     backgroundColor: '#eee',

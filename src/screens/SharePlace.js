@@ -35,6 +35,10 @@ class SharePlace extends Component {
       location: {
         value: null,
         valid: false
+      },
+      image: {
+        value: null,
+        valid: false
       }
     }
   };
@@ -46,7 +50,11 @@ class SharePlace extends Component {
 
 
   onAddPlaceHandler = () => {
-    this.props.onAddPlace(this.state.controls.placeName.value,this.state.controls.location.value);
+    this.props.onAddPlace(
+      this.state.controls.placeName.value,
+      this.state.controls.location.value,
+      this.state.controls.image.value
+      );
     this.props.navigation.navigate('FindPlace');
   };
   onLocationPicked = location => {
@@ -63,7 +71,20 @@ class SharePlace extends Component {
         }
       }
     })
-  }
+  };
+  onPickedImage = (image) => {
+    this.setState(prevState => {
+      return {
+        controls: {
+          ...prevState.controls,
+          image: {
+            value: image,
+            valid: true
+          }
+        }
+      }
+    })
+  };
 
   onChangePlace = (val) => {
     this.setState(prevState => {
@@ -90,14 +111,18 @@ class SharePlace extends Component {
                 <TextWrapper>
                   <HeaderText>Share a place with us!</HeaderText>
                 </TextWrapper>
-                <PickImage />
+                <PickImage onPickedImage={this.onPickedImage}/>
                 <PickLocation onLocationPicked={this.onLocationPicked}/>
                 <PlaceInput PlaceName={this.onChangePlace} valid={valid} touched={touched}/>
                 <View style={styles.button}>
                   <Button
                     title='share the place'
                     onPress={this.onAddPlaceHandler}
-                    disabled={!valid || !this.state.controls.location.valid}
+                    disabled={
+                      !valid ||
+                      !this.state.controls.location.valid ||
+                      !this.state.controls.image.valid
+                    }
                   />
                 </View>
               </View>
@@ -119,7 +144,7 @@ class SharePlace extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddPlace: (placeName, location) => dispatch(addPlace(placeName, location))
+    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image))
   }
 };
 export default connect(null, mapDispatchToProps)(SharePlace);

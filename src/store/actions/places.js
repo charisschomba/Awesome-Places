@@ -5,11 +5,12 @@ import {
   DESELECT_PLACE
 } from "./actionTypes";
 
-export const addPlace = (place, location) => {
+export const addPlace = (place, location, image) => {
   return {
     type: ADD_PLACE,
     placeName: place,
-    location
+    location,
+    image
   }
 };
 

@@ -67,11 +67,6 @@ class PickImage extends React.Component {
         <View style={styles.button}>
           <Button title='Locate me' onPress={this.getLocationHandler}/>
         </View>
-        <View>
-          <Text>
-            {this.state.initialRegion.longitude}
-          </Text>
-        </View>
       </View>
     );
   }
@@ -82,16 +77,12 @@ const styles = StyleSheet.create({
     width :'100%',
     alignItems: 'center',
   },
-  placeHolder: {
+  map: {
     borderColor: 'black',
     borderWidth: 1,
     backgroundColor: '#eee',
     width: '80%',
     height: 200
-  },
-  map: {
-    height: 250,
-    width: "100%"
   },
   button : {
     margin: 8,
