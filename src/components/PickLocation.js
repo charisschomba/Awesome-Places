@@ -27,7 +27,11 @@ class PickImage extends React.Component {
           latitude: latitude,
         },
         pickedLocation: true,
-      }
+      };
+    });
+    this.props.onLocationPicked({
+      longitude: longitude,
+      latitude: latitude,
     })
   };
   getLocationHandler = () => {

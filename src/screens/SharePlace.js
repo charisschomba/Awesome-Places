@@ -16,13 +16,27 @@ import HeaderText from '../components/UI/HeaderText';
 import TextWrapper from '../components/UI/MainTextWrapper';
 import PickImage from '../components/PickImage';
 import PickLocation from '../components/PickLocation';
+import validate from '../utils/validations';
 
 import { addPlace } from '../store/actions/places'
 import background from '../assets/share.jpeg';
 
 class SharePlace extends Component {
   state = {
-    placeName: ''
+    controls: {
+      placeName: {
+        value: '',
+        valid: false,
+        touched: false,
+        validationRules: {
+          notEmpty: true
+        }
+      },
+      location: {
+        value: null,
+        valid: false
+      }
+    }
   };
 
   static navigationOptions = {
@@ -32,17 +46,42 @@ class SharePlace extends Component {
 
 
   onAddPlaceHandler = () => {
-    if(this.state.placeName.trim() === "") {
-      return;
-    }
-    this.props.onAddPlace(this.state.placeName);
+    this.props.onAddPlace(this.state.controls.placeName.value,this.state.controls.location.value);
     this.props.navigation.navigate('FindPlace');
   };
+  onLocationPicked = location => {
+    this.setState(prevState => {
+      return{
+        controls: {
+          ...prevState.controls,
+          location: {
+            ...prevState.controls.location,
+            value: location,
+            valid: true
+          }
 
-  onChangePlace = (e) => {
-    this.setState({placeName: e})
+        }
+      }
+    })
+  }
+
+  onChangePlace = (val) => {
+    this.setState(prevState => {
+      return {
+        controls : {
+          ...prevState.controls,
+          placeName: {
+            ...prevState.controls.placeName,
+            value: val,
+            valid: validate(val, prevState.controls.placeName.validationRules),
+            touched: true
+          }
+        }
+      }
+    });
   };
   render() {
+    const {valid, touched} = this.state.controls.placeName;
     return(
         <KeyboardAvoidingView behavior="height">
           <ScrollView>
@@ -52,10 +91,14 @@ class SharePlace extends Component {
                   <HeaderText>Share a place with us!</HeaderText>
                 </TextWrapper>
                 <PickImage />
-                <PickLocation />
-                <PlaceInput PlaceName={this.onChangePlace}/>
+                <PickLocation onLocationPicked={this.onLocationPicked}/>
+                <PlaceInput PlaceName={this.onChangePlace} valid={valid} touched={touched}/>
                 <View style={styles.button}>
-                  <Button title='share the place' onPress={this.onAddPlaceHandler}/>
+                  <Button
+                    title='share the place'
+                    onPress={this.onAddPlaceHandler}
+                    disabled={!valid || !this.state.controls.location.valid}
+                  />
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -76,7 +119,7 @@ class SharePlace extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddPlace: (placeName) => dispatch(addPlace(placeName))
+    onAddPlace: (placeName, location) => dispatch(addPlace(placeName, location))
   }
 };
 export default connect(null, mapDispatchToProps)(SharePlace);
