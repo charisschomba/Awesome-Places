@@ -1,8 +1,10 @@
 import {createStore, combineReducers, applyMiddleware, compose} from "redux";
-import placesReducer from './reducers/placesReducer';
+import {places, loader} from './reducers/';
+import * as thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({
-  places: placesReducer
+  places: places,
+  loader: loader
 });
 
 let composeEnhancer =  compose;
@@ -11,8 +13,8 @@ if(__DEV__) {
   composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 }
 
-const middleware = [];
+const middlewares = [thunk.default];
 
-const configureStore = () => createStore(rootReducer, composeEnhancer(applyMiddleware(...middleware)));
+const configureStore = () => createStore(rootReducer, composeEnhancer(applyMiddleware(...middlewares)));
 
 export default configureStore;

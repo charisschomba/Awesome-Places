@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import NoPlaces from '../components/UI/NoItem';
 import Spinner from '../components/Animations/Spinner';
 import PlaceList from '../components/ListItem/ListPlaces';
+import { getPlaces } from "../store/actions/places";
 
 class FindPlace extends Component {
   state = {
@@ -16,11 +17,12 @@ class FindPlace extends Component {
   };
 
   componentDidMount() {
-    if(this.state.placesLoaded && this.props.places.length === 0)this.animateText();
+    this.props.fetchPlaces();
+    if(this.props.placesLoaded && this.props.places.length === 0)this.animateText();
   }
   
   componentDidUpdate(){
-    if(this.state.placesLoaded && this.props.places.length === 0)this.animateText();
+    if(this.props.placesLoaded && this.props.places.length === 0)this.animateText();
   }
   animateText = () => {
     Animated.timing(this.state.aminValue, {
@@ -38,7 +40,7 @@ class FindPlace extends Component {
 
   };
   render() {
-    const opacity = this.state.aminValue
+    const opacity = this.state.aminValue;
     const Animstyles =  {
       opacityAnim: {
         opacity,
@@ -51,16 +53,16 @@ class FindPlace extends Component {
           outputRange: [1, 0]
         }),
       }],
-    }
+    };
     return(
       <View style={styles.container}>
         {
-          this.state.placesLoaded && this.props.places.length !== 0 
+          this.props.placesLoaded && this.props.places.length !== 0
           ? <PlaceList
-          places={this.props.places}
-          selectedItem={this.itemSelectedHandler}
-          /> 
-        : this.state.placesLoaded && this.props.places.length === 0 
+              places={this.props.places}
+              selectedItem={this.itemSelectedHandler}
+            />
+        : this.props.placesLoaded && this.props.places.length === 0
         ? <NoPlaces style={Animstyles.opacityAnim}>Awesome places will be displayed here</NoPlaces>
         : <Spinner>Fetching awesome places</Spinner>
         }
@@ -71,7 +73,13 @@ class FindPlace extends Component {
 
   const mapStateToProps = (state) => {
     return {
-      places: state.places.places
+      places: state.places.places,
+      placesLoaded: state.places.placesLoaded
+    }
+  };
+  const mapDispatchToProps = dispatch => {
+    return {
+      fetchPlaces: () => dispatch(getPlaces())
     }
   };
 
@@ -81,7 +89,7 @@ class FindPlace extends Component {
       justifyContent: 'center',
       display: 'flex'
     },
-  })
+  });
   
 
-export default connect(mapStateToProps, null)(FindPlace);
+export default connect(mapStateToProps, mapDispatchToProps)(FindPlace);

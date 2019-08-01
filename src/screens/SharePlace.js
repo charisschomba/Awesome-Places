@@ -18,7 +18,8 @@ import PickImage from '../components/PickImage';
 import PickLocation from '../components/PickLocation';
 import validate from '../utils/validations';
 
-import { addPlace } from '../store/actions/places'
+import {addPlace, getPlaces} from '../store/actions/places'
+import Spinner from '../components/Animations/Spinner';
 import background from '../assets/share.jpeg';
 
 class SharePlace extends Component {
@@ -55,7 +56,11 @@ class SharePlace extends Component {
       this.state.controls.location.value,
       this.state.controls.image.value
       );
-    this.props.navigation.navigate('FindPlace');
+    this.props.fetchPlaces();
+    // if(this.props.isLoading){
+    //   console.log(this.props.isLoading);
+      this.props.navigation.navigate('FindPlace');
+    // }
   };
   onLocationPicked = location => {
     this.setState(prevState => {
@@ -115,15 +120,19 @@ class SharePlace extends Component {
                 <PickLocation onLocationPicked={this.onLocationPicked}/>
                 <PlaceInput PlaceName={this.onChangePlace} valid={valid} touched={touched}/>
                 <View style={styles.button}>
-                  <Button
-                    title='share the place'
-                    onPress={this.onAddPlaceHandler}
-                    disabled={
-                      !valid ||
-                      !this.state.controls.location.valid ||
-                      !this.state.controls.image.valid
-                    }
-                  />
+                  {
+                    this.props.isLoading
+                    ?  <Spinner>Processing</Spinner>
+                     : <Button
+                        title='share the place'
+                        onPress={this.onAddPlaceHandler}
+                        disabled={
+                          !valid ||
+                          !this.state.controls.location.valid ||
+                          !this.state.controls.image.valid
+                        }
+                      />
+                  }
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -141,10 +150,15 @@ class SharePlace extends Component {
     flex: 1
    },
  });
-
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = state => {
   return {
-    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image))
+    isLoading: state.loader.isLoading
   }
 };
-export default connect(null, mapDispatchToProps)(SharePlace);
+const mapDispatchToProps = dispatch => {
+  return {
+    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image)),
+    fetchPlaces: () => dispatch(getPlaces())
+  }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(SharePlace);

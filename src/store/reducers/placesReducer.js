@@ -1,28 +1,24 @@
 import {
-  ADD_PLACE,
+  SET_PLACES,
   DELETE_PLACE
 } from '../actions/actionTypes';
 
-import PlaceImage from '../../assets/1.jpg';
 
 const initialState = {
-  places: []
+  places: [],
+  placesLoaded: false
 };
 
 const reducer = (state = initialState, action) => {
-  const { location, placeName, image } = action;
+  const { places } = action;
   switch (action.type) {
-    case ADD_PLACE:
+    case SET_PLACES:
       return {
         ...state,
-        places: state.places.concat({
-          key: Math.random().toString(),
-          name: placeName,
-          image: {
-            uri: image.uri
-          },
-          location: location,
-        })
+        places: places,
+        placesLoaded: true
+
+
       };
     case DELETE_PLACE:
       return {
