@@ -43,9 +43,9 @@ const StackNavigator =  createStackNavigator({
 });
 
 const SwitchNavigator = createSwitchNavigator({
-  // AuthScreen: {
-  //   screen: AuthScreen,
-  // },
+  AuthScreen: {
+    screen: AuthScreen,
+  },
   StackNavigator
 });
 

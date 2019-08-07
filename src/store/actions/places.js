@@ -57,7 +57,6 @@ export const addPlace = (place, location, image) => {
           })
           .then(res => res.json())
           .then(res => {
-            console.warn(res);
             dispatch(stopLoading());
           })
 

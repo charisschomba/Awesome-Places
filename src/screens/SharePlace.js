@@ -122,7 +122,7 @@ class SharePlace extends Component {
                 <View style={styles.button}>
                   {
                     this.props.isLoading
-                    ?  <Spinner>Processing</Spinner>
+                    ?  <Spinner/>
                      : <Button
                         title='share the place'
                         onPress={this.onAddPlaceHandler}
