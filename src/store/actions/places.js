@@ -24,7 +24,7 @@ export const setPlace = places => {
   }
 };
 
-export const addPlace = (place, location, image) => {
+export const addPlace = (place, location, image, callBack) => {
 
   return dispatch => {
     dispatch(startLoading());
@@ -57,6 +57,7 @@ export const addPlace = (place, location, image) => {
           })
           .then(res => res.json())
           .then(res => {
+            callBack();
             dispatch(stopLoading());
           })
 

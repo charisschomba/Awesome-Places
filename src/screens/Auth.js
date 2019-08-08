@@ -17,6 +17,7 @@ import CustomButton from '../components/UI/CustomButton';
 import background from '../assets/background.jpeg';
 import validator from '../utils/validations';
 import {tryAuth} from "../store/actions";
+import Spinner from '../components/Animations/Spinner';
 
 class AuthScreen extends Component {
   state = {
@@ -69,14 +70,15 @@ class AuthScreen extends Component {
     });
   };
 
-  login = () => {
+  onTryHandler =  () => {
     const data = {
       email: this.state.controls.email.value,
       password: this.state.controls.password.value
     };
 
-    this.props.onLogin(data);
-    return this.props.navigation.navigate('Places');
+   this.props.onTryAuth(data, this.state.authMode, () => {
+       this.props.navigation.navigate('Places');
+   });
   };
   updateInputState = (key, value) =>  {
     let connectedValue = {};
@@ -116,6 +118,21 @@ class AuthScreen extends Component {
   };
   render() {
     let headingText = null;
+    let submitButton = (
+      <CustomButton
+        type="submit"
+        color='#29aaf4'
+        onPress={this.onTryHandler}
+        disabled={
+          !this.state.controls.confirmPwd.valid && this.state.authMode === 'signup' ||
+          !this.state.controls.password.valid ||
+          !this.state.controls.email.valid
+        }
+      >{this.state.authMode}</CustomButton>
+    );
+    if (this.props.loader) {
+      submitButton = <Spinner />
+    }
     if (this.state.viewMode === 'potrait'){
         headingText = (
         <View style={styles.headerText}>
@@ -190,16 +207,7 @@ class AuthScreen extends Component {
               </View>
             </View>
             </TouchableWithoutFeedback>
-            <CustomButton
-              type="submit"
-              color='#29aaf4'
-              onPress={this.login}
-              disabled={
-                !this.state.controls.confirmPwd.valid && this.state.authMode === 'signup' ||
-                !this.state.controls.password.valid ||
-                !this.state.controls.email.valid
-              }
-            >{this.state.authMode}</CustomButton>
+            {submitButton}
         </KeyboardAvoidingView>
       </ImageBackground>
     );
@@ -208,7 +216,13 @@ class AuthScreen extends Component {
 
 const mapStateToDispatch = dispatch =>  {
   return {
-    onLogin: (authData) => dispatch(tryAuth(authData))
+    onTryAuth: (authData, authMode, callBack) => dispatch(tryAuth(authData, authMode, callBack))
+  }
+};
+
+const mapStateToProps = state =>  {
+  return {
+    loader: state.loader.isLoading,
   }
 };
 
@@ -244,4 +258,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(null, mapStateToDispatch)(AuthScreen);
+export default connect(mapStateToProps, mapStateToDispatch)(AuthScreen);

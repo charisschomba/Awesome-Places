@@ -54,13 +54,12 @@ class SharePlace extends Component {
     this.props.onAddPlace(
       this.state.controls.placeName.value,
       this.state.controls.location.value,
-      this.state.controls.image.value
+      this.state.controls.image.value,
+      () => {
+        this.props.fetchPlaces();
+        this.props.navigation.navigate('FindPlace');
+      }
       );
-    this.props.fetchPlaces();
-    // if(this.props.isLoading){
-    //   console.log(this.props.isLoading);
-      this.props.navigation.navigate('FindPlace');
-    // }
   };
   onLocationPicked = location => {
     this.setState(prevState => {
@@ -157,7 +156,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
   return {
-    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image)),
+    onAddPlace: (placeName, location, image, callBack) => dispatch(addPlace(placeName, location, image, callBack)),
     fetchPlaces: () => dispatch(getPlaces())
   }
 };

@@ -30,13 +30,13 @@ const TabNavigator = createBottomTabNavigator(
             iconName = `md-map`;
           } else{
             iconName = `ios-map`;
-          } 
+          }
         } else if (routeName === 'SharePlace') {
           if(Platform.OS === 'android'){
             iconName = `md-share`;
           } else{
             iconName = `ios-share-alt`;
-          } 
+          }
 
         }
         return <IconComponent name={iconName} size={25} color={tintColor} />;
