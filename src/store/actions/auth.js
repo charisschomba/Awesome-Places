@@ -1,4 +1,5 @@
-import {AUTH_SET_TOKEN, AUTH_GET_TOKEN} from "./actionTypes";
+import AsyncStorage from '@react-native-community/async-storage';
+import { AUTH_SET_TOKEN, AUTH_GET_TOKEN_SUCCESS } from "./actionTypes";
 import { stopLoading, startLoading} from "./loader";
 
 export const tryAuth = (authData, authMode, callBack) => {
@@ -18,14 +19,55 @@ export const authSetToken = token => {
   }
 };
 
+export const authStoreToken = token => {
+  return dispatch => {
+    dispatch(authSetToken(token));
+    AsyncStorage.setItem('authToken', token)
+
+  }
+};
+
+export const authGetTokenSuccess = () => {
+  return {
+    type: AUTH_GET_TOKEN_SUCCESS
+  }
+};
+
+export const authAutoSignIn = (callBack) => {
+  return dispatch => {
+    dispatch(authGetToken())
+      .then( token => {
+        callBack();
+      })
+      .catch(err => {
+        return;
+      })
+  };
+};
+
 export const authGetToken = () => {
   return (dispatch, getState) => {
     const promise = new Promise((resolve, reject) => {
       const token = getState().auth.token;
       if(!token) {
-        reject()
+        AsyncStorage.getItem('authToken')
+          .catch( error => {
+            dispatch(authGetTokenSuccess());
+            reject()
+          })
+          .then(tokenFromStorage => {
+            if (!tokenFromStorage) {
+              dispatch(authGetTokenSuccess());
+              reject();
+              return;
+            }
+            dispatch(authSetToken(tokenFromStorage));
+            resolve(tokenFromStorage);
+            dispatch(authGetTokenSuccess())
+          });
       } else {
-        resolve(token)
+        resolve(token);
+        dispatch(authGetTokenSuccess())
       }
     });
     return promise
@@ -51,7 +93,7 @@ export const authSignup = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
        if (!persedRes.error) {
-            dispatch(authSetToken(persedRes.idToken));
+            dispatch(authStoreToken(persedRes.idToken));
             callBack();
             dispatch(stopLoading())
         } else {
@@ -85,7 +127,7 @@ export const authLogin = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
         if (!persedRes.error) {
-          dispatch(authSetToken(persedRes.idToken));
+          dispatch(authStoreToken(persedRes.idToken));
           callBack();
           dispatch(stopLoading())
         } else {

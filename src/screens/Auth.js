@@ -16,7 +16,7 @@ import TextWrapper from '../components/UI/MainTextWrapper';
 import CustomButton from '../components/UI/CustomButton';
 import background from '../assets/background.jpeg';
 import validator from '../utils/validations';
-import {tryAuth} from "../store/actions";
+import { tryAuth, authAutoSignIn} from "../store/actions";
 import Spinner from '../components/Animations/Spinner';
 
 class AuthScreen extends Component {
@@ -54,6 +54,12 @@ class AuthScreen extends Component {
     super(props);
     Dimensions.addEventListener("change", this.updateStyles )
   }
+  componentDidMount(){
+    this.props.onAutoSignIn(() => {
+      this.props.navigation.navigate('Places');
+    })
+  }
+
   componentWillUnmount(){
     Dimensions.removeEventListener('change', this.updateStyles)
   }
@@ -146,6 +152,7 @@ class AuthScreen extends Component {
         )
     }
     return(
+      !this.props.authenticated && this.props.token === null  ?
       <ImageBackground source={background} style={styles.backgroundImage}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           {headingText}
@@ -209,20 +216,23 @@ class AuthScreen extends Component {
             </TouchableWithoutFeedback>
             {submitButton}
         </KeyboardAvoidingView>
-      </ImageBackground>
+      </ImageBackground> : <Spinner/>
     );
   }
 }
 
 const mapStateToDispatch = dispatch =>  {
   return {
-    onTryAuth: (authData, authMode, callBack) => dispatch(tryAuth(authData, authMode, callBack))
+    onTryAuth: (authData, authMode, callBack) => dispatch(tryAuth(authData, authMode, callBack)),
+    onAutoSignIn: (callback) => dispatch(authAutoSignIn(callback))
   }
 };
 
 const mapStateToProps = state =>  {
   return {
     loader: state.loader.isLoading,
+    authenticated : state.auth.isAuthenticated,
+    token: state.auth.token,
   }
 };
 

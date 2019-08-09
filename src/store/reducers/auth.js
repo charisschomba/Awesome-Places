@@ -1,7 +1,8 @@
-import { AUTH_GET_TOKEN, AUTH_SET_TOKEN } from "../actions/actionTypes";
+import { AUTH_GET_TOKEN, AUTH_SET_TOKEN, AUTH_GET_TOKEN_SUCCESS } from "../actions/actionTypes";
 
 const initialState = {
-  token: null
+  token: null,
+  isAuthenticated: true
 };
 
 const auth = (state = initialState, action) => {
@@ -15,6 +16,12 @@ const auth = (state = initialState, action) => {
       return {
         ...state,
         token: action.token
+      };
+
+    case AUTH_GET_TOKEN_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: false
       };
     default:
       return state

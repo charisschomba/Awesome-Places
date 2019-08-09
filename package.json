@@ -9,6 +9,7 @@
     "android-dev": "react-native run-android"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.6.1",
     "axios": "^0.19.0",
     "dotenv": "^8.0.0",
     "fetch": "^1.1.0",
