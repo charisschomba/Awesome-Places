@@ -5,12 +5,13 @@ import {
   DESELECT_PLACE,
   SET_PLACES
 } from "./actionTypes";
-import { stopLoading, startLoading } from './';
+import { stopLoading, startLoading, authGetToken } from './';
 
 const imageUri = 'https://us-central1-awesome-places-1564486653305.cloudfunctions.net/storeImage';
 const storeUri = 'https://awesome-places-1564486653305.firebaseio.com/places.json';
+const deleteUri = 'https://awesome-places-1564486653305.firebaseio.com/places/';
 
-export const deletePlace = (key) => {
+export const deletePlaceLocally = (key) => {
   return {
     type: DELETE_PLACE,
     placeKey: key
@@ -27,17 +28,23 @@ export const setPlace = places => {
 export const addPlace = (place, location, image, callBack) => {
 
   return dispatch => {
+    let authToken;
     dispatch(startLoading());
-    fetch(imageUri, {
-      method: "POST",
-      body: JSON.stringify({
-        image: image.base64
-      })
-    })
+    dispatch(authGetToken())
       .catch(err => {
-        console.log('Error', err);
-        alert('something wrong! try again');
-        dispatch(stopLoading());
+        alert('please log in first to share a place');
+      })
+      .then( token => {
+        authToken = token;
+        return fetch(imageUri, {
+          method: "POST",
+          body: JSON.stringify({
+            image: image.base64
+          }),
+          headers: {
+            "Authorization": "Bearer "+ token
+          }
+        })
       })
       .then(res => res.json())
       .then( res => {
@@ -46,7 +53,7 @@ export const addPlace = (place, location, image, callBack) => {
           location,
           image: res
         };
-        return fetch(storeUri,{
+        return fetch(storeUri + '?auth=' + authToken,{
             method: "POST",
             body: JSON.stringify(placeData)
           })
@@ -59,18 +66,25 @@ export const addPlace = (place, location, image, callBack) => {
           .then(res => {
             callBack();
             dispatch(stopLoading());
-          })
+          });
 
     })
+      .catch(err => {
+        console.log('Error', err);
+        alert('something wrong! try again');
+        dispatch(stopLoading());
+      })
   }
 };
 
 export const getPlaces = () => {
   return dispatch => {
-    fetch(storeUri)
+    dispatch(authGetToken())
+      .then( token =>{
+        return fetch(storeUri + '?auth=' + token)
+      })
       .catch(err => {
-        console.log('Error', err);
-        alert('something wrong! try again')
+        alert('please login first')
       })
       .then(res => res.json())
       .then(persedRes => {
@@ -86,22 +100,34 @@ export const getPlaces = () => {
         }
         dispatch(setPlace(places))
       })
-}
+      .catch(err => {
+        console.log('Error', err);
+        alert('something wrong! try again')
+      });
+};
 };
 
-// export const deletePlace = key => {
-//   return dispatch => {
-//     fetch(storeUri, {
-//       method: "DELETE",
-//       body: JSON.stringify({
-//         id: key
-//       })
-//     })
-//       .then(res => {
-//         console.log(res)
-//       })
-//       .catch(err => {
-//         console.log(err)
-//       })
-//   }
-// };
+export const deletePlace = key => {
+  return dispatch => {
+    dispatch(deletePlaceLocally(key));
+    dispatch(authGetToken())
+      .then( token => {
+        return fetch(deleteUri + key + '.json?auth=' + token  , {
+          method: "DELETE",
+          body: JSON.stringify({
+            id: key
+          })
+        })
+      })
+      .catch( err => {
+        alert('please login first')
+      })
+      .then(res => {
+        console.log(res);
+        alert('place deleted')
+      })
+      .catch(err => {
+        console.log(err)
+      });
+  }
+};

@@ -1,4 +1,4 @@
-import { TRY_AUTH, AUTH_SUCCESS } from "./actionTypes";
+import {AUTH_SET_TOKEN, AUTH_GET_TOKEN} from "./actionTypes";
 import { stopLoading, startLoading} from "./loader";
 
 export const tryAuth = (authData, authMode, callBack) => {
@@ -11,11 +11,28 @@ export const tryAuth = (authData, authMode, callBack) => {
   }
 };
 
-export const authSuccess = () => {
+export const authSetToken = token => {
   return {
-    type: AUTH_SUCCESS
+    type:  AUTH_SET_TOKEN,
+    token
   }
 };
+
+export const authGetToken = () => {
+  return (dispatch, getState) => {
+    const promise = new Promise((resolve, reject) => {
+      const token = getState().auth.token;
+      if(!token) {
+        reject()
+      } else {
+        resolve(token)
+      }
+    });
+    return promise
+  }
+};
+
+
 
 export const authSignup = (authData, callBack) => {
   return dispatch => {
@@ -34,6 +51,7 @@ export const authSignup = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
        if (!persedRes.error) {
+            dispatch(authSetToken(persedRes.idToken));
             callBack();
             dispatch(stopLoading())
         } else {
@@ -67,6 +85,7 @@ export const authLogin = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
         if (!persedRes.error) {
+          dispatch(authSetToken(persedRes.idToken));
           callBack();
           dispatch(stopLoading())
         } else {

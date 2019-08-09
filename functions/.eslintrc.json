@@ -10,7 +10,6 @@
   "rules": {
     // Removed rule "disallow the use of console" from recommended eslint rules
     "no-console": "off",
-
     // Removed rule "disallow multiple spaces in regular expressions" from recommended eslint rules
     "no-regex-spaces": "off",
 
@@ -102,7 +101,7 @@
     "callback-return": 2,
 
     // Require error handling in callbacks
-    "handle-callback-err": 2,
+    "handle-callback-err": 1,
 
     // Warn against string concatenation with __dirname and __filename
     "no-path-concat": 1,
@@ -112,7 +111,7 @@
 
     // Return inside each then() to create readable and reusable Promise chains.
     // Forces developers to return console logs and http calls in promises. 
-    "promise/always-return": 2,
+    "promise/always-return": 0,
 
     //Enforces the use of catch() on un-returned promises
     "promise/catch-or-return": 2,
