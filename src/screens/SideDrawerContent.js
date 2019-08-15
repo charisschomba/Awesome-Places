@@ -7,7 +7,7 @@ import {
   TouchableOpacity, 
   StyleSheet,
 } from 'react-native';
-
+import { authLogout } from '../store/actions';
 class SideDrawerContent extends Component {
   render() {
     return (
@@ -16,7 +16,7 @@ class SideDrawerContent extends Component {
         <View  style={styles.icon}>
           <Icon name='log-out'/>
         </View>
-        <TouchableOpacity onPress={() =>this.props.navigation.navigate('AuthScreen')}>
+        <TouchableOpacity onPress={() => this.props.onLogout(() => this.props.navigation.navigate('AuthScreen'))}>
           <Text>Logout</Text>
         </TouchableOpacity>
         </View>
@@ -30,7 +30,9 @@ const mapStateToProps = state => {
 };
 
 const  mapDispatchToProps = dispatch =>  {
-  return {};
+  return {
+    onLogout: (callBack) => dispatch(authLogout(callBack))
+  };
 };
 const styles = StyleSheet.create({
   container: {

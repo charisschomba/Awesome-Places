@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { AUTH_SET_TOKEN, AUTH_GET_TOKEN_SUCCESS } from "./actionTypes";
+import { AUTH_SET_TOKEN, AUTH_GET_TOKEN_SUCCESS, AUTH_CLEAR_STORAGE } from "./actionTypes";
 import { stopLoading, startLoading} from "./loader";
 
 export const tryAuth = (authData, authMode, callBack) => {
@@ -12,20 +12,19 @@ export const tryAuth = (authData, authMode, callBack) => {
   }
 };
 
-export const authSetToken = (token, expiresIn, refreshToken) => {
+export const authSetToken = (token, expiryDate) => {
   return {
     type:  AUTH_SET_TOKEN,
     token,
-    expiresIn,
-    refreshToken
+    expiryDate
   }
 };
 
 export const authStoreToken = (token, expiresIn, refreshToken) => {
+  const now = new Date();
+  const expiryDate = now.getTime() + expiresIn * 1000;
   return dispatch => {
-    dispatch(authSetToken(token));
-    const now = new Date();
-    const expiryDate = now.getTime() + expiresIn * 1000;
+    dispatch(authSetToken(token, expiryDate));
     AsyncStorage.setItem('authToken', token);
     AsyncStorage.setItem('authExpiresIn', expiryDate.toString());
     AsyncStorage.setItem('authRefreshToken', refreshToken)
@@ -55,7 +54,8 @@ export const authGetToken = () => {
   return (dispatch, getState) => {
     const promise = new Promise((resolve, reject) => {
       const token = getState().auth.token;
-      if(!token) {
+      const expiryDate = getState().auth.expiryDate;
+      if(!token || new Date(expiryDate) <= new Date()) {
         AsyncStorage.getItem('authToken')
           .catch( error => {
             dispatch(authGetTokenSuccess());
@@ -139,7 +139,8 @@ export const authSignup = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
        if (!persedRes.error) {
-            dispatch(authStoreToken(persedRes.idToken, persedRes.expiresIn, persedRes.refreshToken));
+         const { idToken, expiresIn, refreshToken } = persedRes;
+            dispatch(authStoreToken(idToken, expiresIn, refreshToken));
             callBack();
             dispatch(stopLoading())
         } else {
@@ -173,7 +174,8 @@ export const authLogin = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
         if (!persedRes.error) {
-          dispatch(authStoreToken(persedRes.idToken, persedRes.expiresIn, persedRes.refreshToken));
+          const { idToken, expiresIn, refreshToken } = persedRes;
+          dispatch(authStoreToken(idToken, expiresIn, refreshToken));
           callBack();
           dispatch(stopLoading())
         } else {
@@ -193,6 +195,23 @@ export const authLogin = (authData, callBack) => {
 const authClearStorage = () => {
   return dispatch => {
     AsyncStorage.removeItem('authToken');
-    AsyncStorage.removeItem('authExpiresIn')
+    AsyncStorage.removeItem('authExpiresIn');
+    return AsyncStorage.removeItem('authRefreshToken');
+  }
+};
+
+export const authLogout = (callBack) => {
+  return dispatch => {
+    dispatch(authClearStorage())
+      .then(() => {
+        callBack();
+      });
+    dispatch(authRemoveToken());
+  }
+};
+
+export const authRemoveToken = () => {
+  return {
+    type: AUTH_CLEAR_STORAGE
   }
 };

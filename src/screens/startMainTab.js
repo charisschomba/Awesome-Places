@@ -5,16 +5,7 @@ import { Platform } from 'react-native';
 import SharePlace from './SharePlace';
 import FindPlace from './FindPlace';
 
-// class PlacesBottomTaB extends React.Component {
-//   render(){
-//     return (
-
-//     );
-//   }
-// }
-
 const TabNavigator = createBottomTabNavigator(
-
   {
   FindPlace: FindPlace,
   SharePlace: SharePlace
@@ -46,10 +37,6 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
     },
-  },{
-    navigationOptions: {
-      // header: <CustomHeader />,
-    }
   });
 
 export default TabNavigator;
