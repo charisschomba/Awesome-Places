@@ -102,7 +102,7 @@ export const getPlaces = () => {
       })
       .catch(err => {
         console.log('Error', err);
-        alert('something wrong! try again')
+        alert('something wrong! try again11')
       });
 };
 };

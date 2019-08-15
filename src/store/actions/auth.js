@@ -12,18 +12,23 @@ export const tryAuth = (authData, authMode, callBack) => {
   }
 };
 
-export const authSetToken = token => {
+export const authSetToken = (token, expiresIn, refreshToken) => {
   return {
     type:  AUTH_SET_TOKEN,
-    token
+    token,
+    expiresIn,
+    refreshToken
   }
 };
 
-export const authStoreToken = token => {
+export const authStoreToken = (token, expiresIn, refreshToken) => {
   return dispatch => {
     dispatch(authSetToken(token));
-    AsyncStorage.setItem('authToken', token)
-
+    const now = new Date();
+    const expiryDate = now.getTime() + expiresIn * 1000;
+    AsyncStorage.setItem('authToken', token);
+    AsyncStorage.setItem('authExpiresIn', expiryDate.toString());
+    AsyncStorage.setItem('authRefreshToken', refreshToken)
   }
 };
 
@@ -46,6 +51,7 @@ export const authAutoSignIn = (callBack) => {
 };
 
 export const authGetToken = () => {
+  let persedToken;
   return (dispatch, getState) => {
     const promise = new Promise((resolve, reject) => {
       const token = getState().auth.token;
@@ -56,21 +62,61 @@ export const authGetToken = () => {
             reject()
           })
           .then(tokenFromStorage => {
+            persedToken = tokenFromStorage;
             if (!tokenFromStorage) {
               dispatch(authGetTokenSuccess());
               reject();
               return;
             }
-            dispatch(authSetToken(tokenFromStorage));
-            resolve(tokenFromStorage);
-            dispatch(authGetTokenSuccess())
-          });
+            return AsyncStorage.getItem('authExpiresIn');
+          })
+          .then( expiryDate => {
+            const persedDate = new Date (parseInt(expiryDate));
+            const now = new Date();
+            if(persedDate > now) {
+              dispatch(authSetToken(persedToken));
+              resolve(persedToken);
+              dispatch(authGetTokenSuccess())
+            } else {
+              reject();
+              dispatch(authGetTokenSuccess())
+            }
+          })
+          .catch(err => reject());
       } else {
         resolve(token);
         dispatch(authGetTokenSuccess())
       }
     });
-    return promise
+    return promise.catch(err => {
+      return AsyncStorage.getItem('authRefreshToken')
+        .then( refreshToken => {
+          return fetch('https://securetoken.googleapis.com/v1/token?key=AIzaSyAa15ldjxojbXPWb7FZwGM4lvayGzJg1i4', {
+            method: 'POST',
+            body: "grant_type=refresh_token&refresh_token=" + refreshToken,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+        })
+        .then(res => res.json())
+        .then(({id_token, refresh_token, expires_in}) => {
+          if(id_token){
+            dispatch(authStoreToken(id_token, expires_in, refresh_token));
+            dispatch(stopLoading());
+            return id_token
+          } else {
+            dispatch(authClearStorage());
+          }
+        });
+    })
+      .then(token => {
+        if(!token){
+          throw new Error()
+        } else {
+          return token
+        }
+      });
   }
 };
 
@@ -93,7 +139,7 @@ export const authSignup = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
        if (!persedRes.error) {
-            dispatch(authStoreToken(persedRes.idToken));
+            dispatch(authStoreToken(persedRes.idToken, persedRes.expiresIn, persedRes.refreshToken));
             callBack();
             dispatch(stopLoading())
         } else {
@@ -127,7 +173,7 @@ export const authLogin = (authData, callBack) => {
       .then(res => res.json())
       .then(persedRes => {
         if (!persedRes.error) {
-          dispatch(authStoreToken(persedRes.idToken));
+          dispatch(authStoreToken(persedRes.idToken, persedRes.expiresIn, persedRes.refreshToken));
           callBack();
           dispatch(stopLoading())
         } else {
@@ -144,3 +190,9 @@ export const authLogin = (authData, callBack) => {
   };
 };
 
+const authClearStorage = () => {
+  return dispatch => {
+    AsyncStorage.removeItem('authToken');
+    AsyncStorage.removeItem('authExpiresIn')
+  }
+};
