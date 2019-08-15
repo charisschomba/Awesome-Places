@@ -46,7 +46,13 @@ export const addPlace = (place, location, image, callBack) => {
           }
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        if(res.ok){
+          return res.json();
+        } else {
+          throw new Error();
+        }
+      })
       .then( res => {
         const placeData = {
           name: place,
@@ -62,7 +68,13 @@ export const addPlace = (place, location, image, callBack) => {
             alert('something wrong! try again');
             dispatch(stopLoading());
           })
-          .then(res => res.json())
+          .then(res => {
+            if(res.ok){
+              return res.json();
+            } else {
+              throw new Error();
+            }
+          })
           .then(res => {
             callBack();
             dispatch(stopLoading());
@@ -86,7 +98,13 @@ export const getPlaces = () => {
       .catch(err => {
         alert('please login first')
       })
-      .then(res => res.json())
+      .then(res => {
+        if(res.ok){
+          return res.json();
+        } else {
+          throw new Error();
+        }
+      })
       .then(persedRes => {
         const places = [];
         for(let key in persedRes){
@@ -123,7 +141,6 @@ export const deletePlace = key => {
         alert('please login first')
       })
       .then(res => {
-        console.log(res);
         alert('place deleted')
       })
       .catch(err => {

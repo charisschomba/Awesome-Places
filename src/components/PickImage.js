@@ -5,8 +5,12 @@ class PickImage extends React.Component {
   state = {
     pickedImage: null
   };
+  resetImage = () => {
+    this.setState({pickedImage: null})
+  };
+
   pickImageHandler = () => {
-    ImagePicker.showImagePicker({title: 'Pick an image'}, res => {
+    ImagePicker.showImagePicker({title: 'Pick an image', maxWidth: 800, maxHeight: 600}, res => {
       if(res.didCancel) {
         console.log('user cancelled')
       } else if(res.error) {
@@ -43,7 +47,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#eee',
     width: '80%',
-    height: 200
+    height: 150
   },
   previewImage: {
     height: "100%",

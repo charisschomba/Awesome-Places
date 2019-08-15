@@ -3,14 +3,20 @@ import {View, Text, Button, StyleSheet, Dimensions} from 'react-native';
 import MapView from 'react-native-maps';
 
 class PickImage extends React.Component {
-  state ={
-    pickedLocation: null,
-    initialRegion:{
-      latitude: 37.7900352,
-      longitude: -122.4023726,
-      latitudeDelta: 0.0122,
-      longitudeDelta: Dimensions.get('window').width /  Dimensions.get('window').width * 0.0122,
-  }};
+  resetMap = () => {
+    this.setState({
+      pickedLocation: null,
+      initialRegion:{
+        latitude: 37.7900352,
+        longitude: -122.4023726,
+        latitudeDelta: 0.0122,
+        longitudeDelta: Dimensions.get('window').width /  Dimensions.get('window').width * 0.0122,
+      }
+    })
+  };
+  componentWillMount() {
+    this.resetMap();
+  }
 
   handlePickLocation = (event) => {
     const {nativeEvent: {coordinate: {latitude, longitude }}} = event;
@@ -61,6 +67,7 @@ class PickImage extends React.Component {
         <MapView
           style={styles.map}
           initialRegion={this.state.initialRegion}
+          region={!this.state.pickedLocation ? this.state.initialRegion : null}
           onPress={this.handlePickLocation}
           ref = {ref => this.map = ref}
         >{marker}</MapView>
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: '#eee',
     width: '80%',
-    height: 200
+    height: 150
   },
   button : {
     margin: 8,

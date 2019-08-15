@@ -23,32 +23,36 @@ import Spinner from '../components/Animations/Spinner';
 import background from '../assets/share.jpeg';
 
 class SharePlace extends Component {
-  state = {
-    controls: {
-      placeName: {
-        value: '',
-        valid: false,
-        touched: false,
-        validationRules: {
-          notEmpty: true
-        }
-      },
-      location: {
-        value: null,
-        valid: false
-      },
-      image: {
-        value: null,
-        valid: false
-      }
-    }
-  };
-
   static navigationOptions = {
     tabBarLabel: 'Share Place',
    };
 
+  reset = () => {
+    this.setState({
+      controls: {
+        placeName: {
+          value: '',
+          valid: false,
+          touched: false,
+          validationRules: {
+            notEmpty: true
+          }
+        },
+        location: {
+          value: null,
+          valid: false
+        },
+        image: {
+          value: null,
+          valid: false
+        }
+      }
+    });
+  };
 
+  componentWillMount() {
+    this.reset();
+  }
 
   onAddPlaceHandler = () => {
     this.props.onAddPlace(
@@ -60,6 +64,9 @@ class SharePlace extends Component {
         this.props.navigation.navigate('FindPlace');
       }
       );
+    this.reset();
+    this.imagePicker.resetImage();
+    this.mapPicker.resetMap();
   };
   onLocationPicked = location => {
     this.setState(prevState => {
@@ -115,9 +122,18 @@ class SharePlace extends Component {
                 <TextWrapper>
                   <HeaderText>Share a place with us!</HeaderText>
                 </TextWrapper>
-                <PickImage onPickedImage={this.onPickedImage}/>
-                <PickLocation onLocationPicked={this.onLocationPicked}/>
-                <PlaceInput PlaceName={this.onChangePlace} valid={valid} touched={touched}/>
+                <PickImage
+                  onPickedImage={this.onPickedImage}
+                  ref = {ref => (this.imagePicker = ref )}
+                />
+                <PickLocation
+                  onLocationPicked={this.onLocationPicked}
+                  ref={ref => this.mapPicker = ref}
+                />
+                {
+                  this.props.isLoading ? null
+                  : <PlaceInput PlaceName={this.onChangePlace} valid={valid} touched={touched}/>
+                }
                 <View style={styles.button}>
                   {
                     this.props.isLoading
